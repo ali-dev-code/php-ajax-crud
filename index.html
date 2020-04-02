@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Title</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+    <style>
+
+    html,body{
+      overflow-x: hidden;
+    }
+
+/* pagination */
+.blog-pagination {
+  text-align: center;
+  /* margin: 20px 20px 20px; */
+}
+
+.blog-pagination a {
+    font-family: 'Montserrat', sans-serif;
+font-weight:700;
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background: #fff;
+  color: #b0b0b0;
+  line-height: 40px;
+  border-radius: 100%;
+  box-shadow: 0px 0px 13px 0px #bdbdbd;
+  margin: 5px;
+}
+
+.blog-pagination a.active {background:#f4623a; color:#fff;}
+.grow { -webkit-transition: all .2s ease-in-out; transition: all .2s ease-in-out; }
+.grow:hover { -webkit-transform: scale(1.1); transform: scale(1.1); }
+
+    </style>
+</head>
+<body>
+
+  <script>
+
+    $(document).ready(function () {
+
+
+
+
+ /**********Update Cars Table Display with time ****************/
+
+  setInterval(function () {
+
+    update_cars();
+
+
+   }, 2000);
+
+      // show cars
+
+function update_cars() {
+
+
+  $.ajax({
+
+url:'display_cars.php',
+type: 'POST',
+success: function (show_cars) {
+
+  if (!show_cars.error) {
+
+    $('#show-cars').html(show_cars);
+
+  }
+
+  }
+
+}); // show cars
+
+
+ }// update cars
+
+
+
+      $('#search').keyup(function () {
+
+        var search = $('#search').val();
+
+        $.ajax({
+
+          url:'search.php',
+          data:{search:search},
+          type: 'POST',
+          success:function(data){
+
+            if (!data.error) {
+
+              $('#result').html(data);
+
+
+            } // if !data
+
+          } //success data
+
+        }); // ajax
+
+       }); // search keyup
+
+
+// add car
+      $('#add-card-form').submit(function (evt) {
+
+        evt.preventDefault();
+
+        var postData = $(this).serialize(); // here is form data.
+
+        var url = $(this).attr('action');
+
+         $.post(url, postData, function (php_table_data) {
+
+          $(".car-results").html(php_table_data);
+
+          $('#add-card-form')[0].reset();
+
+
+
+           });
+
+       }); // add-car-from
+
+
+
+
+// show error while adding new cars
+
+
+$('.add_error').on('input', function() {
+
+  var error = $('.add_error').val();
+
+        $.ajax({
+
+      url:'errors.php',
+      data:{error:error},
+      type: 'POST',
+      success:function(data){
+
+        if (!data.error) {
+
+          $('.car-results').html(data);
+
+        } // if !data
+
+      } //success data
+
+      }); // ajax
+
+ });
+
+    }); // ready
+
+
+  </script>
+  <div id="container" class=" px-4 px-md-0 pt-5 text-center" >
+    <div class="row">
+    <div class="col-md-4 m-auto ">
+      <div class="card-header bg-dark text-light">
+        <h5> Search our Database</h5>
+      </div><!-- /.card-header -->
+
+
+      <div class="form-group mb-3">
+        <input class="form-control form-control-lg" type="text" name="search" id="search" placeholder="search our enventory">
+
+      </div>
+
+      <br>
+      <br>
+      <div class="bg-success" id="result">  </div>
+
+
+      </div><!-- /.col-sm-4 -->
+    </div><!-- /.row -->
+    <div class="row mt-4">
+      <div class="col-md-4 m-auto">
+        <form id="add-card-form" method="POST"  action="add_car.php">
+
+          <div class="d-flex">
+            <input id="" class="form-control add_error form-control-lg" type="text"  name="car_name"  placeholder="Add Car">
+            <input type="submit" value="Add Car" class="ml-1 btn btn-primary">
+          </div><!-- /.d-flex -->
+        </form>
+      </div><!-- /.col-sm-4 -->
+    </div><!-- /.row -->
+
+
+    <div class="row">
+      <div class="col-md-4 m-auto">
+        <div class="car-results">
+
+        </div>
+      </div>
+    </div>
+    <br>
+    <br>
+    <br>
+
+  <div class="row justify-content-center">
+
+    <div class="col-md-4 ">
+  <div id="show-cars">
+
+  </div><!-- /#show-cars -->
+    </div>
+
+  <div class="col-md-4">
+
+    <div id="action-container">
+
+    </div><!-- /#action-container -->
+
+  </div><!-- /.col-md-4 -->
+
+  </div><!-- /.row -->
+</div>
+</body>
+</html>
